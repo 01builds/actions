@@ -1,0 +1,61 @@
+name: Reusable AI Guardrails
+
+on:
+  workflow_call:
+    inputs:
+      hono-dir:
+        description: 'Directory for Hono API backend'
+        required: false
+        default: '.'
+        type: string
+      vite-dir:
+        description: 'Directory for Vite React frontend'
+        required: false
+        default: '.'
+        type: string
+      runner:
+        description: 'GitHub Runner type'
+        required: false
+        default: 'ubuntu-latest'
+        type: string
+    secrets:
+      GEMINI_API_KEY:
+        required: false
+
+jobs:
+  security:
+    name: Security & File Audit
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: 01builds/actions/.github/actions/security-audit@v1
+
+  hono-guardrail:
+    name: Hono & Cloudflare Worker Guardrail
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: 01builds/actions/.github/actions/hono-cloudflare@v1
+        with:
+          working-directory: ${{ inputs.hono-dir }}
+
+  vite-guardrail:
+    name: Vite & React Frontend Guardrail
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: 01builds/actions/.github/actions/vite-react@v1
+        with:
+          working-directory: ${{ inputs.vite-dir }}
+
+  ai-review:
+    name: AI Review & Self-Healing Report
+    needs: [security, hono-guardrail, vite-guardrail]
+    if: always()
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: 01builds/actions/.github/actions/ai-review@v1
+        with:
+          gemini-api-key: ${{ secrets.GEMINI_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}

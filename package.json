@@ -1,0 +1,26 @@
+{
+  "name": "@01builds/actions",
+  "version": "1.0.0",
+  "description": "Reusable GitHub Actions and Guardrails for AI Automated Development",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "github-actions",
+    "guardrails",
+    "cloudflare",
+    "hono",
+    "vite",
+    "react",
+    "ai-development"
+  ],
+  "author": "01builds",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}

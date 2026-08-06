@@ -1,0 +1,45 @@
+name: 'Vite & React Guardrails'
+description: 'Validates Vite + React frontend components, TypeScript types, Vitest suites, and production build.'
+
+inputs:
+  working-directory:
+    description: 'Path to frontend directory'
+    required: false
+    default: '.'
+  node-version:
+    description: 'Node.js version'
+    required: false
+    default: '22'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 10
+
+    - name: Install Dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: pnpm install --frozen-lockfile
+
+    - name: React Typecheck
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: pnpm tsc --noEmit
+
+    - name: React Component Test Suite (Vitest)
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: pnpm exec vitest run --coverage
+
+    - name: Production Build Check
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: pnpm run build

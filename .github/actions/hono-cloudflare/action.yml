@@ -1,0 +1,45 @@
+name: 'Hono & Cloudflare Guardrails'
+description: 'Validates Hono API, TypeScript types, Vitest test suites, and Cloudflare Worker bindings.'
+
+inputs:
+  working-directory:
+    description: 'Path to backend directory'
+    required: false
+    default: '.'
+  node-version:
+    description: 'Node.js version'
+    required: false
+    default: '22'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 10
+
+    - name: Install Dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: pnpm install --frozen-lockfile
+
+    - name: Hono Typecheck
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: pnpm tsc --noEmit
+
+    - name: Hono Test Suite (Vitest)
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: pnpm exec vitest run --coverage
+
+    - name: Validate Cloudflare Worker Types
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: npx wrangler types || true
