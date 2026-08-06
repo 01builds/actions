@@ -1,0 +1,27 @@
+name: Auto Release & Move Tag
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Move Floating Major Tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update Floating Major Tag (v1)
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/}"
+          MAJOR_VERSION=$(echo "$VERSION" | cut -d. -f1)
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git tag -fa "$MAJOR_VERSION" -m "Update $MAJOR_VERSION to point to $VERSION"
+          git push origin "$MAJOR_VERSION" --force

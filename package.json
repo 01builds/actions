@@ -1,10 +1,11 @@
 {
   "name": "@01builds/actions",
   "version": "1.0.0",
-  "description": "Reusable GitHub Actions and Guardrails for AI Automated Development",
+  "description": "Enterprise-grade GitHub Actions and Guardrails for AI Automated Development",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "ncc build src/index.ts -o dist --source-map --license licenses.txt",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
   "keywords": [
@@ -18,8 +19,14 @@
   ],
   "author": "01builds",
   "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/exec": "^1.1.1",
+    "@actions/github": "^6.0.0"
+  },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "@vercel/ncc": "^0.38.3",
     "typescript": "^5.7.0",
     "vitest": "^3.0.0"
   }
