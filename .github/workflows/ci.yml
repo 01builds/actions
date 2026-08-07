@@ -33,12 +33,12 @@ jobs:
       - name: Run Unit Tests
         run: pnpm test
 
-      - name: Build Action (dist/index.js)
+      - name: Build Action Bundle
         run: pnpm run build
 
       - name: Self-Test Action Execution
         uses: ./
         with:
-          hono-dir: '.'
-          vite-dir: '.'
-          min-coverage: '80'
+          api-directory: '.'
+          web-directory: '.'
+          coverage-threshold: '80'
