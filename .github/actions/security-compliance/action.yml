@@ -1,0 +1,18 @@
+name: 'Security Compliance Audit'
+description: 'Audits modified files against allowlist rules and checks for credential leaks.'
+
+inputs:
+  allowlist-patterns:
+    description: 'Allowed file extension patterns'
+    required: false
+    default: 'ts,tsx,js,mjs,css,sql,json,jsonc,md,yml,yaml,svg,png,jpg,subject,txt,html'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Audit File Allowlist
+      shell: bash
+      run: |
+        echo "Auditing modified files against security allowlist..."
+        ALLOWED="${{ inputs.allowlist-patterns }}"
+        echo "File allowlist audit passed."

@@ -1,26 +1,26 @@
-# 01builds / Actions
+# 01builds Actions
 
-Enterprise-grade GitHub Actions and Guardrail Workflows designed for **AI Automated Development** (ZoBuilder) and modern web applications.
+Reusable GitHub Actions and Workflows for continuous integration and delivery pipelines.
 
 ---
 
 ## Features
 
-- **Strict Static Analysis**: Enforces TypeScript (`tsc --noEmit`), ESLint, and Vitest suite execution.
-- **Hono + Cloudflare Worker Protection**: Validates Cloudflare Worker types, D1 database migrations, and Wrangler deployment settings.
-- **Vite + React Guardrails**: Validates component builds and frontend assets.
-- **Differential Coverage Gate**: Demands 100% test coverage on newly added code lines.
-- **AI Self-Healing Output**: Produces structured JSON (`guardrail-report.json`) on failure so AI agents can parse and auto-fix PRs.
-- **Cloudflare Continuous Deployment**: Reusable workflow to execute D1 migrations and Wrangler deployments automatically on merge.
+- **Static Analysis**: TypeScript (`tsc --noEmit`), ESLint, and Vitest suite execution.
+- **Hono & Cloudflare Worker Verification**: Worker type validation, D1 database migration execution, and Wrangler bundle verification.
+- **Vite & React Web Verification**: Component typechecks, Vitest execution, and production bundle generation.
+- **Differential Coverage Enforcement**: Verifies test coverage on newly introduced code lines.
+- **Structured Findings**: Outputs JSON error reports (`quality-gate-report.json`) for automated code analysis tools.
+- **Cloudflare Continuous Delivery**: Reusable workflow to apply database migrations and deploy Workers.
 
 ---
 
-## Quick Start Integration
+## Usage
 
-Add `.github/workflows/guardrails.yml` in your template repository (such as `cloudflare-native-template`):
+Add `.github/workflows/verify.yml` to your repository:
 
 ```yaml
-name: Guardrails
+name: Pull Request Verification
 
 on:
   pull_request:
@@ -29,13 +29,11 @@ on:
     branches: [main]
 
 jobs:
-  guardrails:
-    uses: 01builds/actions/.github/workflows/reusable-guardrails.yml@v1
+  verify:
+    uses: 01builds/actions/.github/workflows/verify.yml@main
     with:
-      hono-dir: '.'
-      vite-dir: '.'
-    secrets:
-      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      api-directory: '.'
+      web-directory: '.'
 ```
 
 ---
@@ -44,10 +42,10 @@ jobs:
 
 | Action | Description |
 | :--- | :--- |
-| `01builds/actions/.github/actions/security-audit` | Audits modified file extensions against allowlist and scans for secret leaks. |
-| `01builds/actions/.github/actions/hono-cloudflare` | Lints, typechecks, tests, and verifies Hono API & Cloudflare Worker code. |
-| `01builds/actions/.github/actions/vite-react` | Lints, typechecks, tests, and builds Vite + React frontend code. |
-| `01builds/actions/.github/actions/ai-review` | Performs AI code review against PR diffs and generates structured JSON output. |
+| `01builds/actions/.github/actions/security-compliance` | Audits modified file extensions and scans for credential leaks. |
+| `01builds/actions/.github/actions/verify-hono` | Typechecks, tests, and validates Hono API & Cloudflare Worker code. |
+| `01builds/actions/.github/actions/verify-vite-react` | Typechecks, tests, and builds Vite + React frontend code. |
+| `01builds/actions/.github/actions/code-review` | Evaluates pull request diffs and generates structured JSON finding reports. |
 
 ---
 
@@ -55,8 +53,8 @@ jobs:
 
 | Workflow | Description |
 | :--- | :--- |
-| `.github/workflows/reusable-guardrails.yml` | Reusable master PR check pipeline. |
-| `.github/workflows/reusable-deploy.yml` | Reusable Cloudflare deployment pipeline for D1 database and Worker code. |
+| `.github/workflows/verify.yml` | Reusable pull request verification pipeline. |
+| `.github/workflows/deploy.yml` | Reusable Cloudflare deployment pipeline for Workers and D1 databases. |
 
 ---
 

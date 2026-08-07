@@ -1,23 +1,20 @@
 import * as core from '@actions/core';
-import * as exec from '@actions/exec';
-import * as fs from 'fs';
 import { evaluateDiffCoverage } from './diff_coverage.js';
 import { writeGuardrailReport } from './json_reporter.js';
 
 async function run(): Promise<void> {
   try {
-    core.info('🚀 Starting 01builds AI Guardrails Evaluation...');
+    core.info('Starting quality gate verification...');
 
-    const honoDir = core.getInput('hono-dir') || '.';
-    const viteDir = core.getInput('vite-dir') || '.';
-    const minCoverage = parseInt(core.getInput('min-coverage') || '80', 10);
+    const apiDir = core.getInput('api-directory') || core.getInput('hono-dir') || '.';
+    const webDir = core.getInput('web-directory') || core.getInput('vite-dir') || '.';
+    const threshold = parseInt(core.getInput('coverage-threshold') || core.getInput('min-coverage') || '80', 10);
 
-    core.info(`📂 Hono Directory: ${honoDir}`);
-    core.info(`📂 Vite Directory: ${viteDir}`);
-    core.info(`🎯 Minimum Coverage Required: ${minCoverage}%`);
+    core.info(`API Directory: ${apiDir}`);
+    core.info(`Web Directory: ${webDir}`);
+    core.info(`Coverage Threshold: ${threshold}%`);
 
-    // Evaluate differential test coverage
-    const coverageResult = evaluateDiffCoverage('coverage/lcov.info', minCoverage);
+    const coverageResult = evaluateDiffCoverage('coverage/lcov.info', threshold);
 
     writeGuardrailReport({
       timestamp: new Date().toISOString(),
@@ -28,18 +25,18 @@ async function run(): Promise<void> {
             {
               category: 'TEST_COVERAGE',
               severity: 'HIGH',
-              message: `Differential coverage ${coverageResult.coveragePercentage}% is below required ${minCoverage}%`
+              message: `Differential coverage ${coverageResult.coveragePercentage}% is below required ${threshold}%`
             }
           ]
     });
 
     if (!coverageResult.passed) {
-      core.setFailed(`🚨 Guardrail Check Failed: Coverage below ${minCoverage}%`);
+      core.setFailed(`Quality gate failed: Differential coverage below ${threshold}%`);
     } else {
-      core.info('✅ All Guardrail Checks Passed Cleanly!');
+      core.info('Quality gate verification completed successfully.');
     }
   } catch (error: any) {
-    core.setFailed(`❌ Unhandled Guardrail Error: ${error.message}`);
+    core.setFailed(`Verification error: ${error.message}`);
   }
 }
 

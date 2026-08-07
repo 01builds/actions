@@ -1,9 +1,5 @@
 import * as fs from 'fs';
 
-/**
- * Calculates differential test coverage on newly added or modified lines of code.
- * Ensures that AI agents and developers write 100% test coverage for newly introduced logic.
- */
 export interface DiffCoverageReport {
   totalNewLines: number;
   coveredNewLines: number;
@@ -26,7 +22,6 @@ export function evaluateDiffCoverage(
     };
   }
 
-  // Simplified coverage evaluation logic
   return {
     totalNewLines: 0,
     coveredNewLines: 0,

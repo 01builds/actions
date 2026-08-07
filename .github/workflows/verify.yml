@@ -1,0 +1,61 @@
+name: Pull Request Verification
+
+on:
+  workflow_call:
+    inputs:
+      api-directory:
+        description: 'Directory for API backend'
+        required: false
+        default: '.'
+        type: string
+      web-directory:
+        description: 'Directory for web frontend'
+        required: false
+        default: '.'
+        type: string
+      runner:
+        description: 'GitHub runner image'
+        required: false
+        default: 'ubuntu-latest'
+        type: string
+    secrets:
+      LLM_API_KEY:
+        required: false
+
+jobs:
+  security:
+    name: Security Compliance Audit
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: 01builds/actions/.github/actions/security-compliance@main
+
+  backend:
+    name: Backend Verification
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: 01builds/actions/.github/actions/verify-hono@main
+        with:
+          working-directory: ${{ inputs.api-directory }}
+
+  frontend:
+    name: Frontend Verification
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: 01builds/actions/.github/actions/verify-vite-react@main
+        with:
+          working-directory: ${{ inputs.web-directory }}
+
+  review:
+    name: Automated Code Review
+    needs: [security, backend, frontend]
+    if: always()
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: 01builds/actions/.github/actions/code-review@main
+        with:
+          llm-api-key: ${{ secrets.LLM_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
