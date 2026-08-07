@@ -1,9 +1,9 @@
-name: 'Hono & Cloudflare Guardrails'
-description: 'Validates Hono API, TypeScript types, Vitest test suites, and Cloudflare Worker bindings.'
+name: 'Vite React Web Verification'
+description: 'Typechecks TypeScript, runs Vitest test suite, and builds production web assets.'
 
 inputs:
   working-directory:
-    description: 'Path to backend directory'
+    description: 'Path to application directory'
     required: false
     default: '.'
   node-version:
@@ -29,17 +29,17 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       run: pnpm install --frozen-lockfile
 
-    - name: Hono Typecheck
+    - name: Run Typecheck
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       run: pnpm tsc --noEmit
 
-    - name: Hono Test Suite (Vitest)
+    - name: Run Vitest Suite
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       run: pnpm exec vitest run --coverage
 
-    - name: Validate Cloudflare Worker Types
+    - name: Build Web Bundle
       shell: bash
       working-directory: ${{ inputs.working-directory }}
-      run: npx wrangler types || true
+      run: pnpm run build

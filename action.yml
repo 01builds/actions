@@ -1,36 +1,36 @@
-name: '01builds AI Guardrails'
-description: 'Enterprise-grade quality gates, differential test coverage, and AI code review for Hono, Vite+React, and Cloudflare Workers.'
+name: '01builds Quality Gate'
+description: 'Quality verification, differential test coverage, and automated code review.'
 author: '01builds'
 
 branding:
-  icon: 'shield-check'
+  icon: 'shield'
   color: 'blue'
 
 inputs:
-  hono-dir:
-    description: 'Path to Hono API backend directory'
+  api-directory:
+    description: 'Path to API backend application directory'
     required: false
     default: '.'
-  vite-dir:
-    description: 'Path to Vite + React frontend directory'
+  web-directory:
+    description: 'Path to web frontend application directory'
     required: false
     default: '.'
-  min-coverage:
+  coverage-threshold:
     description: 'Minimum required differential test coverage percentage'
     required: false
     default: '80'
-  gemini-api-key:
-    description: 'Gemini API Key for AI code review'
+  llm-api-key:
+    description: 'API key for automated code review'
     required: false
 
 outputs:
   report-path:
-    description: 'Path to generated JSON guardrail report'
-    value: 'guardrail-report.json'
+    description: 'Path to generated JSON summary report'
+    value: 'quality-gate-report.json'
   passed:
-    description: 'Whether all guardrails passed cleanly (true/false)'
-    value: '${{ steps.guardrail-step.outputs.passed }}'
+    description: 'Status of quality gate execution'
+    value: '${{ steps.gate-step.outputs.passed }}'
 
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'dist/index.js'

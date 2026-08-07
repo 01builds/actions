@@ -1,4 +1,4 @@
-name: Reusable Cloudflare Deploy
+name: Cloudflare Deployment Pipeline
 
 on:
   workflow_call:
@@ -9,7 +9,7 @@ on:
         default: 'production'
         type: string
       working-directory:
-        description: 'Directory containing wrangler configuration'
+        description: 'Directory containing Wrangler configuration'
         required: false
         default: '.'
         type: string
@@ -21,7 +21,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to Cloudflare
+    name: Deploy Worker & Database Migrations
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
         working-directory: ${{ inputs.working-directory }}
         run: pnpm install --frozen-lockfile
 
-      - name: Apply D1 Database Migrations
+      - name: Apply Database Migrations
         shell: bash
         working-directory: ${{ inputs.working-directory }}
         env:
@@ -45,7 +45,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: npx wrangler d1 migrations apply --remote || true
 
-      - name: Deploy Worker / Pages to Cloudflare
+      - name: Deploy Worker Application
         shell: bash
         working-directory: ${{ inputs.working-directory }}
         env:

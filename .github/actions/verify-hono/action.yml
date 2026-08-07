@@ -1,9 +1,9 @@
-name: 'Vite & React Guardrails'
-description: 'Validates Vite + React frontend components, TypeScript types, Vitest suites, and production build.'
+name: 'Hono Worker Verification'
+description: 'Typechecks TypeScript, runs Vitest test suite, and validates Cloudflare Worker types.'
 
 inputs:
   working-directory:
-    description: 'Path to frontend directory'
+    description: 'Path to application directory'
     required: false
     default: '.'
   node-version:
@@ -29,17 +29,17 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       run: pnpm install --frozen-lockfile
 
-    - name: React Typecheck
+    - name: Run Typecheck
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       run: pnpm tsc --noEmit
 
-    - name: React Component Test Suite (Vitest)
+    - name: Run Vitest Suite
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       run: pnpm exec vitest run --coverage
 
-    - name: Production Build Check
+    - name: Verify Worker Types
       shell: bash
       working-directory: ${{ inputs.working-directory }}
-      run: pnpm run build
+      run: npx wrangler types || true
