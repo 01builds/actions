@@ -27,14 +27,14 @@ jobs:
     name: Security Compliance Audit
     runs-on: ${{ inputs.runner }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: 01builds/actions/.github/actions/security-compliance@main
 
   backend:
     name: Backend Verification
     runs-on: ${{ inputs.runner }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: 01builds/actions/.github/actions/verify-hono@main
         with:
           working-directory: ${{ inputs.api-directory }}
@@ -43,7 +43,7 @@ jobs:
     name: Frontend Verification
     runs-on: ${{ inputs.runner }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: 01builds/actions/.github/actions/verify-vite-react@main
         with:
           working-directory: ${{ inputs.web-directory }}
@@ -54,7 +54,7 @@ jobs:
     if: always()
     runs-on: ${{ inputs.runner }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: 01builds/actions/.github/actions/code-review@main
         with:
           llm-api-key: ${{ secrets.LLM_API_KEY }}
